@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendário de Conteúdo · @pedro_munaretto</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0906;
+  --bg2: #100F0C;
+  --bg3: #181510;
+  --bg4: #201C14;
+  --gold: #D4A843;
+  --gold2: #F0C458;
+  --gold3: #8A6820;
+  --cream: #F2E8CC;
+  --muted: #6B5E42;
+  --muted2: #4A4030;
+  --red: #E04B2A;
+  --green: #4BAE6E;
+  --blue: #4B8AE0;
+  --text: #E8DCC8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--red));
+  z-index: 1000;
+  transition: width 0.3s;
+}
+
+/* STICKY HEADER */
+.sticky-header {
+  position: fixed;
+  top: 2px; left: 0; right: 0;
+  background: rgba(10,9,6,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(212,168,67,0.1);
+  padding: 12px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999;
+}
+
+.sticky-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+
+.sticky-stats {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.sticky-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.sticky-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.sticky-stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.progress-ring {
+  width: 44px;
+  height: 44px;
+  position: relative;
+}
+
+.progress-ring svg {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  color: var(--gold);
+}
+
+/* HERO */
+.hero {
+  padding: 120px 48px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(64px, 10vw, 128px);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+
+.hero-title .accent {
+  color: var(--gold);
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+}
+
+.hero-sub {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: clamp(16px, 2vw, 22px);
+  color: var(--muted);
+  margin-bottom: 48px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hero-meta-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  color: var(--cream);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.hero-meta-num .s { color: var(--gold); font-size: 22px; }
+
+.hero-meta-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* STRATEGY STRIP */
+.strategy-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: rgba(212,168,67,0.08);
+  margin: 0 48px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.strat-item {
+  background: var(--bg2);
+  padding: 18px 16px;
+  transition: background 0.2s;
+}
+
+.strat-item:hover { background: var(--bg3); }
+
+.strat-icon { font-size: 18px; margin-bottom: 8px; }
+
+.strat-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.strat-text {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* WEEK */
+.week-section {
+  padding: 56px 48px 0;
+}
+
+.week-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(212,168,67,0.1);
+}
+
+.week-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  color: rgba(212,168,67,0.12);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.week-info { flex: 1; }
+
+.week-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  color: var(--cream);
+  letter-spacing: 0.05em;
+}
+
+.week-theme {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--gold);
+  margin-top: 2px;
+}
+
+.week-dates {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* DAY ROW */
+.day-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--muted2);
+  text-transform: uppercase;
+  padding: 12px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.day-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.04);
+}
+
+.day-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+/* VIDEO CARD */
+.video-card {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s;
+  cursor: default;
+}
+
+.video-card:hover {
+  background: var(--bg3);
+  border-color: rgba(212,168,67,0.12);
+  transform: translateY(-1px);
+}
+
+.video-card.done {
+  opacity: 0.45;
+  background: var(--bg);
+}
+
+.video-card.done .card-top-bar { background: var(--green) !important; }
+
+/* Card top accent bar */
+.card-top-bar {
+  height: 2px;
+  background: var(--gold);
+  transition: background 0.3s;
+}
+
+.video-card.tipo-gancho .card-top-bar { background: var(--red); }
+.video-card.tipo-valor .card-top-bar { background: var(--blue); }
+.video-card.tipo-historia .card-top-bar { background: var(--gold); }
+.video-card.tipo-provocacao .card-top-bar { background: var(--red); }
+.video-card.tipo-bastidor .card-top-bar { background: #9B6AE0; }
+.video-card.tipo-lista .card-top-bar { background: var(--green); }
+
+.card-inner { padding: 16px 16px 14px; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.card-num-day {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-day-txt {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--muted2);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.card-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: rgba(212,168,67,0.15);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  margin-top: 2px;
+}
+
+.card-check {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(212,168,67,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+  color: transparent;
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.card-check:hover {
+  border-color: var(--green);
+  background: rgba(75,174,110,0.1);
+  color: var(--green);
+}
+
+.video-card.done .card-check {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.card-badges {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.badge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 2px;
+}
+
+.badge-red { background: rgba(224,75,42,0.12); color: var(--red); }
+.badge-gold { background: rgba(212,168,67,0.1); color: var(--gold); }
+.badge-blue { background: rgba(75,138,224,0.1); color: var(--blue); }
+.badge-green { background: rgba(75,174,110,0.1); color: var(--green); }
+.badge-purple { background: rgba(155,106,224,0.1); color: #9B6AE0; }
+.badge-fire { background: rgba(224,75,42,0.08); color: var(--red); }
+
+.card-gancho {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--cream);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+/* Accordion */
+.card-accordion {
+  border-top: 1px solid rgba(255,255,255,0.04);
+  margin-top: 8px;
+}
+
+.card-accordion-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 8px 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'DM Sans', sans-serif;
+  transition: color 0.2s;
+}
+
+.card-accordion-toggle:hover { color: var(--gold); }
+
+.accordion-arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.card-accordion-body {
+  display: none;
+  padding-bottom: 8px;
+}
+
+.card-accordion-body.open { display: block; }
+.card-accordion-toggle.open .accordion-arrow { transform: rotate(180deg); }
+
+.roteiro-section {
+  margin-bottom: 8px;
+}
+
+.roteiro-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--muted2);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.roteiro-text {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.roteiro-text strong { color: var(--text); font-weight: 500; }
+
+.card-cta-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(212,168,67,0.06);
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.cta-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--gold3);
+  text-transform: uppercase;
+}
+
+.cta-value {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--gold);
+}
+
+.fvc-strip {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.fvc-label {
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: var(--muted2);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.fvc-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.fvc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(212,168,67,0.15);
+}
+
+.fvc-dot.filled { background: var(--gold); }
+.fvc-dot.high { background: var(--green); }
+
+/* FOOTER */
+.footer {
+  margin-top: 80px;
+  padding: 40px 48px;
+  border-top: 1px solid rgba(212,168,67,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+.footer-meta {
+  font-size: 10px;
+  color: var(--muted2);
+  letter-spacing: 0.1em;
+}
+
+/* RESET BTN */
+.reset-btn {
+  background: rgba(224,75,42,0.08);
+  border: 1px solid rgba(224,75,42,0.2);
+  color: var(--red);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+
+.reset-btn:hover {
+  background: rgba(224,75,42,0.15);
+}
+
+/* SCROLL FADE */
+.fade-in {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* GICA TAG */
+.gica-tag {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .sticky-header { padding: 10px 20px; }
+  .hero, .week-section { padding-left: 20px; padding-right: 20px; }
+  .strategy-strip { margin: 0 20px; grid-template-columns: 1fr 1fr; }
+  .day-row { grid-template-columns: 1fr; }
+  .footer { flex-direction: column; gap: 12px; padding: 32px 20px; }
+  .hero-meta { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="scrollpb"></div>
+
+<!-- STICKY HEADER -->
+<div class="sticky-header">
+  <div class="sticky-brand">@pedro_munaretto</div>
+  <div class="sticky-stats">
+    <div class="sticky-stat">
+      <div class="sticky-stat-num" id="count-done">0</div>
+      <div class="sticky-stat-label">Feitos</div>
+    </div>
+    <div class="sticky-stat">
+      <div class="sticky-stat-num" id="count-left">62</div>
+      <div class="sticky-stat-label">Restantes</div>
+    </div>
+    <div class="progress-ring">
+      <svg width="44" height="44" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(212,168,67,0.1)" stroke-width="2.5"/>
+        <circle id="ring-circle" cx="22" cy="22" r="18" fill="none" stroke="#D4A843" stroke-width="2.5" stroke-dasharray="113.1" stroke-dashoffset="113.1" stroke-linecap="round"/>
+      </svg>
+      <div class="progress-ring-text" id="ring-pct">0%</div>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Plano de Conteúdo · Método Segue a Di</div>
+  <h1 class="hero-title">62 CONTEÚDOS.<br><span class="accent">31 dias.</span></h1>
+  <p class="hero-sub">Aplicando GICA, FVC, Dopamina e Ocitocina no seu nicho.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">62</div>
+      <div class="hero-meta-label">Conteúdos</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">2<span class="s">/dia</span></div>
+      <div class="hero-meta-label">Frequência</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">5</div>
+      <div class="hero-meta-label">Linhas editoriais</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-num">10<span class="s">K</span></div>
+      <div class="hero-meta-label">Meta seguidores</div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGY STRIP -->
+<div class="strategy-strip">
+  <div class="strat-item">
+    <div class="strat-icon">🎯</div>
+    <div class="strat-title">Persona</div>
+    <div class="strat-text">Pedro, 18–34 anos, quer trabalhar com internet mas trava na hora de aparecer e postar.</div>
+  </div>
+  <div class="strat-item">
+    <div class="strat-icon">🧠</div>
+    <div class="strat-title">Dopamina</div>
+    <div class="strat-text">Cada conteúdo usa gatilho de expectativa, curiosidade ou progressão para prender até o final.</div>
+  </div>
+  <div class="strat-item">
+    <div class="strat-icon">🩺</div>
+    <div class="strat-title">GICA</div>
+    <div class="strat-text">Todo vídeo segue: Gancho → Interesse → Contexto → Ação. Sem pular etapas.</div>
+  </div>
+  <div class="strat-item">
+    <div class="strat-icon">💛</div>
+    <div class="strat-title">Ocitocina</div>
+    <div class="strat-text">Vulnerabilidade, bastidores reais e histórias que geram identificação profunda.</div>
+  </div>
+  <div class="strat-item">
+    <div class="strat-icon">📊</div>
+    <div class="strat-title">FVC Alvo</div>
+    <div class="strat-text">Todos os conteúdos foram projetados para FVC acima de 18 pontos — zona de viral.</div>
+  </div>
+</div>
+
+<!-- ============================================================ SEMANA 1 -->
+<div class="week-section fade-in">
+  <div class="week-header">
+    <div class="week-num">01</div>
+    <div class="week-info">
+      <div class="week-title">SEMANA 1 — CHOCAR E ATRAIR</div>
+      <div class="week-theme">Quebra de crenças · Identificação emocional</div>
+    </div>
+    <div class="week-dates">14–20 Maio</div>
+  </div>
+
+  <!-- DIA 14 -->
+  <div class="day-label">Quarta · 14 de Maio</div>
+  <div class="day-row">
+
+    <div class="video-card tipo-gancho" data-id="v01">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-num-day">
+            <div class="card-day-txt">Vídeo 01</div>
+            <div class="card-num">01</div>
+          </div>
+          <div class="card-check" onclick="toggleDone(this)">✓</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-red">Reel 20s</span>
+          <span class="badge badge-fire">🔥 Alto viral</span>
+          <span class="badge badge-gold">Identificação</span>
+        </div>
+        <div class="card-gancho">"Você não é preguiçoso. Você tem medo de parecer idiota na internet."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)">
+            <span>Ver roteiro completo</span>
+            <span class="accordion-arrow">▼</span>
+          </button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section">
+              <div class="roteiro-label">G — Gancho (0–2s)</div>
+              <div class="roteiro-text">Câmera colada no rosto, olho direto, tom seco. Fala a frase sem introdução. <strong>Gatilho de curiosidade + zoom in no rosto.</strong></div>
+            </div>
+            <div class="roteiro-section">
+              <div class="roteiro-label">I — Interesse (2–8s)</div>
+              <div class="roteiro-text">"Todo mundo chama de preguiça. Não é. É a voz na sua cabeça dizendo que vão te julgar antes de você terminar de falar."</div>
+            </div>
+            <div class="roteiro-section">
+              <div class="roteiro-label">C — Contexto (8–16s)</div>
+              <div class="roteiro-text">"Enquanto você trava, alguém com metade do seu talento postou três vezes hoje. Não porque é melhor — porque apareceu."</div>
+            </div>
+            <div class="roteiro-section">
+              <div class="roteiro-label">A — Ação (16–20s)</div>
+              <div class="roteiro-text">"Me segue. Aqui eu ensino a calar essa voz."</div>
+            </div>
+            <div class="card-cta-strip">
+              <div class="cta-label">CTA</div>
+              <div class="cta-value">→ FOLLOW</div>
+            </div>
+            <div class="fvc-strip">
+              <div class="fvc-label">FVC</div>
+              <div class="fvc-dots">
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot filled"></div>
+              </div>
+              <div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">23 pts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-provocacao" data-id="v02">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-num-day">
+            <div class="card-day-txt">Vídeo 02</div>
+            <div class="card-num">02</div>
+          </div>
+          <div class="card-check" onclick="toggleDone(this)">✓</div>
+        </div>
+        <div class="card-badges">
+          <span class="badge badge-red">Reel 20s</span>
+          <span class="badge badge-red">Compartilhável</span>
+        </div>
+        <div class="card-gancho">"Para de seguir perfil de marketing. Começa a fazer marketing."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)">
+            <span>Ver roteiro completo</span>
+            <span class="accordion-arrow">▼</span>
+          </button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section">
+              <div class="roteiro-label">G — Gancho (0–2s)</div>
+              <div class="roteiro-text">Andando, sem olhar pra câmera. Tom casual que contradiz uma crença comum. <strong>Gatilho de escassez de atenção.</strong></div>
+            </div>
+            <div class="roteiro-section">
+              <div class="roteiro-label">I — Interesse (2–8s)</div>
+              <div class="roteiro-text">"Você consome conteúdo sobre criar conteúdo há meses. Sabe tudo na teoria."</div>
+            </div>
+            <div class="roteiro-section">
+              <div class="roteiro-label">C — Contexto (8–16s)</div>
+              <div class="roteiro-text">"E o seu Instagram ainda tem 200 seguidores. O problema nunca foi conhecimento. Foi ação."</div>
+            </div>
+            <div class="roteiro-section">
+              <div class="roteiro-label">A — Ação (16–20s)</div>
+              <div class="roteiro-text">"Marca aqui quem precisa ouvir isso."</div>
+            </div>
+            <div class="card-cta-strip">
+              <div class="cta-label">CTA</div>
+              <div class="cta-value">→ MARCAR AMIGO</div>
+            </div>
+            <div class="fvc-strip">
+              <div class="fvc-label">FVC</div>
+              <div class="fvc-dots">
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot high"></div>
+                <div class="fvc-dot filled"></div>
+              </div>
+              <div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 15 -->
+  <div class="day-label">Quinta · 15 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-historia" data-id="v03">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div class="card-num-day"><div class="card-day-txt">Vídeo 03</div><div class="card-num">03</div></div>
+          <div class="card-check" onclick="toggleDone(this)">✓</div>
+        </div>
+        <div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-fire">🔥 Salvar</span></div>
+        <div class="card-gancho">"POV: você gravou, assistiu, odiou e deletou pela décima vez essa semana."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Texto na tela + voz ao mesmo tempo. Formato POV valida a experiência antes de ensinar. <strong>Ocitocina: identificação imediata.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I — Interesse (2–8s)</div><div class="roteiro-text">"Esse vídeo que você deletou era bom. Você não deletou porque estava ruim."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">C — Contexto (8–16s)</div><div class="roteiro-text">"Você está se assistindo com olhos de crítico. Quem vai ver está passando o feed no automático. Ninguém tem lupa no seu vídeo — só você."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Salva esse vídeo pra quando você travar de novo."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-valor" data-id="v04">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 04</div><div class="card-num">04</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Educativo</span></div>
+        <div class="card-gancho">"Seu conteúdo não é ruim. Ele só começa errado — sempre."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Olho no olho, sem corte. Fala com autoridade. <strong>Gatilho de curiosidade: eles querem saber o erro.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I — Interesse (2–8s)</div><div class="roteiro-text">"Os primeiros dois segundos do seu vídeo determinam tudo. O algoritmo mediu a retenção antes de você acabar de falar."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">C — Contexto (8–16s)</div><div class="roteiro-text">"Se você começa com 'oi gente, tudo bem?' — você já perdeu. Sem gancho, sem alcance. É matemática, não sorte."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Me segue — amanhã posto os 5 ganchos que mais param o dedo no feed."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + EXPECTATIVA</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 16 -->
+  <div class="day-label">Sexta · 16 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-lista" data-id="v05">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 05</div><div class="card-num">05</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-green">Reel 20s</span><span class="badge badge-fire">🔥 Top 3</span></div>
+        <div class="card-gancho">"3 tipos de pessoa que nunca crescem na internet — independente de quantos cursos fizerem."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Estrutura Top 3 — lista rápida com corte a cada item. <strong>Dopamina: progressão, pequenos marcos.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I + C — (2–16s)</div><div class="roteiro-text"><strong>Tipo 1:</strong> "Quem espera estar pronto. Pronto não existe." <strong>Tipo 2:</strong> "Quem posta uma vez por semana e acha que o algoritmo vai lembrar." <strong>Tipo 3:</strong> "Quem compara o começo deles com o meio de outra pessoa."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Comenta o número — qual desses é você agora?"</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">21 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-bastidor" data-id="v06">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 06</div><div class="card-num">06</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-purple">Reel 20s</span><span class="badge badge-gold">Bastidores</span></div>
+        <div class="card-gancho">"Quanto eu faturei esse mês trabalhando com a internet — e o que ninguém te mostra."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Fala o número real ou faixa honesta. <strong>Gatilho de exclusividade — bastidores reais ativam ocitocina.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I + C — (2–16s)</div><div class="roteiro-text">Mostra de onde veio — consultoria, conteúdo, indicação. Fala quanto de esforço real foi. "Não foi glamour. Foi consistência em dias que eu não queria aparecer."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Me segue — todo mês posto os bastidores reais."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 17 SAB -->
+  <div class="day-label">Sábado · 17 de Maio ✦ Melhor dia do seu perfil</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v07">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 07</div><div class="card-num">07</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Compartilhar</span></div>
+        <div class="card-gancho">"A câmera do seu celular é boa o suficiente. Para de usar equipamento como desculpa."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Mostra o celular na mão enquanto fala. <strong>Gatilho de escassez — remove a desculpa principal do público.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I + C — (2–16s)</div><div class="roteiro-text">"Perfis com câmera cara que não crescem são mais do que perfis com celular simples que explodiram. O que diferencia não é equipamento. É o que você fala e como você fala. Esse vídeo foi gravado no mesmo celular que está no seu bolso agora."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Salva e para de usar equipamento como desculpa."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-valor" data-id="v08">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 08</div><div class="card-num">08</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Método</span></div>
+        <div class="card-gancho">"Como crio conteúdo todo dia sem ficar sem ideia — em 3 passos."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Promessa específica com número. <strong>Dopamina: progressão — 3 passos cria expectativa de recompensa.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I + C — (2–16s)</div><div class="roteiro-text"><strong>Passo 1:</strong> "Toda dúvida no direct vira vídeo." <strong>Passo 2:</strong> "Todo erro que cometi vira vídeo." <strong>Passo 3:</strong> "Todo conteúdo que consumo — minha opinião vira vídeo."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Salva esse vídeo. Você nunca mais fica sem pauta."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">23 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 18 DOM -->
+  <div class="day-label">Domingo · 18 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v09">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 09</div><div class="card-num">09</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Debate</span></div>
+        <div class="card-gancho">"O algoritmo não te odeia. Você está postando a coisa errada para as pessoas erradas."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Contradiz a crença mais comum do nicho. <strong>Gatilho de exclusividade — dá insider knowledge.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I + C — (2–16s)</div><div class="roteiro-text">"O algoritmo é simples: mostra pra 100 pessoas. Se 30 assistem até o fim, mostra pra 1000. Se 5 assistem, para. O problema não é o algoritmo — é que seu gancho não prende ninguém."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Salva e revê o gancho dos seus últimos 3 posts."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-bastidor" data-id="v10">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 10</div><div class="card-num">10</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-purple">Reel 20s</span><span class="badge badge-gold">Dia a dia real</span></div>
+        <div class="card-gancho">"Um dia na minha vida trabalhando com marketing — a versão real, sem filtro."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">G — Gancho (0–2s)</div><div class="roteiro-text">Vlog rápido, cortes dinâmicos. <strong>Ocitocina: vulnerabilidade e autenticidade.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">I + C — (2–16s)</div><div class="roteiro-text">Mostra: reunião com cliente, gravação, mensagem difícil, momento de dúvida, momento de resultado. Narração: "Ninguém posta a reunião que não foi bem. Eu posto."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação (16–20s)</div><div class="roteiro-text">"Me segue se você quer ver os bastidores reais."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">21 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 19 SEG -->
+  <div class="day-label">Segunda · 19 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-historia" data-id="v11">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 11</div><div class="card-num">11</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-fire">🔥 Salvar</span></div>
+        <div class="card-gancho">"5 coisas que faria diferente se começasse do zero hoje no marketing digital."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Estrutura</div><div class="roteiro-text"><strong>1:</strong> Escolheria nicho específico logo. <strong>2:</strong> Postaria todo dia desde o primeiro. <strong>3:</strong> Arrumaria cliente nos primeiros 30 dias mesmo de graça. <strong>4:</strong> Estudaria vendas antes de tráfego. <strong>5:</strong> Pararia de comparar meu começo com o meio de outros.</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Qual dessas você mais precisava ouvir? Comenta o número."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-provocacao" data-id="v12">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 12</div><div class="card-num">12</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-gold">Objeção</span></div>
+        <div class="card-gancho">"Você acha que precisa de 10 mil seguidores pra ganhar dinheiro. Está errado."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">"Tenho clientes que faturam mais do que perfis de 100 mil seguidores. Sabe o que eles têm que esses não têm? 1.000 seguidores certos que confiam neles. 1.000 seguidores certos valem mais que 100 mil aleatórios."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Me segue — aqui você aprende a crescer certo, não só crescer."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">21 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIA 20 TER -->
+  <div class="day-label">Terça · 20 de Maio ✦ Alto engajamento</div>
+  <div class="day-row">
+    <div class="video-card tipo-valor" data-id="v13">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 13</div><div class="card-num">13</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-fire">🔥 Salvar</span></div>
+        <div class="card-gancho">"O roteiro exato que uso nos vídeos que mais engajam — estrutura GICA."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Estrutura</div><div class="roteiro-text">Mostra a tela com a estrutura enquanto narra: <strong>Gancho</strong> → provoca. <strong>Interesse</strong> → nomeia a dor. <strong>Contexto</strong> → solução inesperada. <strong>Ação</strong> → um único CTA. Aplica ao vivo num tema do nicho em tempo real.</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Salva esse vídeo e usa essa estrutura no seu próximo post."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-historia" data-id="v14">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 14</div><div class="card-num">14</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-gold">Confissão</span></div>
+        <div class="card-gancho">"Eu já deletei vídeo bom com medo de parecer amador. Esse vídeo teria 50 mil views."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">"Na época eu achei que estava ruim. Não estava — eu estava com medo. Medo de parecer amador. Medo de alguém zoar. Esse medo me custou meses de crescimento." <strong>Ocitocina pura — vulnerabilidade real.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Me segue pra não cometer o mesmo erro."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SEMANA 2 -->
+<div class="week-section fade-in">
+  <div class="week-header">
+    <div class="week-num">02</div>
+    <div class="week-info">
+      <div class="week-title">SEMANA 2 — ENSINAR E PROVOCAR</div>
+      <div class="week-theme">Valor prático · Autoridade · FVC máximo</div>
+    </div>
+    <div class="week-dates">21–27 Maio</div>
+  </div>
+
+  <div class="day-label">Quarta · 21 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-provocacao" data-id="v15">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 15</div><div class="card-num">15</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Polêmico</span></div>
+        <div class="card-gancho">"Curso de marketing não te ensina a ganhar dinheiro. Te ensina a comprar mais curso."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">"Não estou falando que curso é lixo. Estou dizendo que a maioria usa curso como substituto pra ação. 'Quando eu terminar esse módulo eu começo.' Esse módulo nunca termina. O aprendizado que mais avançou minha carreira foi pegar um cliente real antes de me sentir pronto."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Concorda ou discorda? Comenta aqui."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DEBATE</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-valor" data-id="v16">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 16</div><div class="card-num">16</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Educativo</span></div>
+        <div class="card-gancho">"A diferença entre quem ganha dinheiro com conteúdo e quem não ganha — em 20 segundos."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Estrutura Comparação VS</div><div class="roteiro-text"><strong>Quem não ganha:</strong> Cria conteúdo aleatório, sem audiência definida, sem oferta clara, espera as coisas acontecerem. <strong>Quem ganha:</strong> Fala pra uma pessoa, tem problema específico, faz CTA toda semana, transforma conteúdo em conversa.</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Qual dos dois você está sendo agora? Comenta."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">21 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-label">Quinta · 22 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v17">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 17</div><div class="card-num">17</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 POV</span></div>
+        <div class="card-gancho">"POV: você finalmente postou o vídeo que ficou 3 semanas no rascunho."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Estrutura Mini História</div><div class="roteiro-text"><strong>Cena 1:</strong> "Segunda: vou gravar hoje. Não gravou." <strong>Cena 2:</strong> "Quarta: amanhã com certeza. Não gravou." <strong>Cena 3:</strong> "Sábado: gravou, assistiu, odiou, deletou." <strong>Cena 4:</strong> "Domingo: gravou sem pensar, postou, 50 mil views."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Marca aqui o seu eu de segunda-feira."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ MARCAR AMIGO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-valor" data-id="v18">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 18</div><div class="card-num">18</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Dica rápida</span></div>
+        <div class="card-gancho">"O horário que você posta importa menos do que você pensa. Isso importa mais."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">"Pessoal obcecado com horário de postagem enquanto o gancho do vídeo está fraco. O algoritmo distribui vídeo bom em qualquer horário. Distribui vídeo ruim em nenhum horário. O que importa: gancho, retenção e CTA claro."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Salva e para de otimizar o que não importa."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">21 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-label">Sexta · 23 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-historia" data-id="v19">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 19</div><div class="card-num">19</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-fire">🔥 Confissão</span></div>
+        <div class="card-gancho">"60 pessoas chamaram meu cliente. Zero fechou. Aprendi isso."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">Tom de confissão vulnerável. "Tráfego sem processo de venda é dinheiro jogado fora. Não adianta ter interesse se você não sabe converter. Aprendi isso da forma mais difícil." Mostra o que mudou depois. <strong>Ocitocina: vulnerabilidade real + aprendizado.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Me segue — semana que vem posto o script completo de conversão."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + EXPECTATIVA</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-lista" data-id="v20">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 20</div><div class="card-num">20</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-green">Reel 20s</span><span class="badge badge-gold">Lista viral</span></div>
+        <div class="card-gancho">"7 erros que impedem você de crescer no Instagram — e todo mundo comete."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Estrutura Lista Rápida</div><div class="roteiro-text">Um erro por corte: Postar sem frequência / Começar se apresentando / Não ter CTA / Copiar ao invés de adaptar / Não responder comentários / Tentar agradar todo mundo / Desistir depois de 2 semanas. <strong>Dopamina: progressão numerada.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Salva e me diz: qual número você está cometendo?"</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR + COMENTÁRIO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-label">Sábado · 24 de Maio ✦ Melhor dia</div>
+  <div class="day-row">
+    <div class="video-card tipo-provocacao" data-id="v21">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 21</div><div class="card-num">21</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Stories+CTA</span></div>
+        <div class="card-gancho">"Stories não crescem perfil. Para de perder tempo lá e faz isso."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">"Stories é pra quem já te conhece. Reels é pra quem ainda não te conhece. Se você quer crescer, precisa de alcance. Alcance vem de reels. Uso correto de stories: converter quem já segue, mostrar bastidores, fazer CTA para consultoria."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Concorda? Discorda? Comenta aqui." + Depois faça stories com ManyChat para responder no direct automaticamente.</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DEBATE + MANYCHAT</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-bastidor" data-id="v22">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 22</div><div class="card-num">22</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-purple">Reel 20s</span><span class="badge badge-gold">Resultado</span></div>
+        <div class="card-gancho">"O que aconteceu quando postei todo dia por 30 dias — dados reais."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">Mostra prints dos números reais comparando antes e depois. "Não foi linear. Teve semana que não cresceu quase nada. Depois explodiu." Lição: "Consistência não tem resultado imediato. Tem resultado composto."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Me segue para ver o próximo update em 30 dias."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-label">Domingo · 25 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v23">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 23</div><div class="card-num">23</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Salvar</span></div>
+        <div class="card-gancho">"Se você tem menos de 5 mil seguidores, para de fazer isso agora."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text"><strong>O que parar:</strong> Obsessão com estética do feed / Stories sem reels / Esperar o momento certo / Usar 30 hashtags. <strong>O que fazer:</strong> Reels todo dia. Gancho forte. Responde todos os comentários. Aparece todo dia.</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Salva e lista o que você vai parar de fazer hoje."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-historia" data-id="v24">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 24</div><div class="card-num">24</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-gold">Vulnerável</span></div>
+        <div class="card-gancho">"O dia em que eu quis desistir de tudo — e o que me fez continuar."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Mini História + Ocitocina</div><div class="roteiro-text">Conta um momento real de dúvida — vídeo que não performou, cliente que sumiu, semana ruim. O que mudou: uma mensagem, um resultado pequeno. "O algoritmo não viu você desistindo. Ele viu você postando de novo no dia seguinte."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Me conta uma vez que você quis desistir mas continuou."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO PESSOAL</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-label">Segunda · 26 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-valor" data-id="v25">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 25</div><div class="card-num">25</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Tutorial</span></div>
+        <div class="card-gancho">"Como escrever um gancho que para o dedo — 3 perguntas antes de gravar."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C — Método</div><div class="roteiro-text"><strong>Pergunta 1:</strong> "Isso provoca emoção? Medo, curiosidade, indignação, identificação." <strong>Pergunta 2:</strong> "Isso promete algo específico que vou entregar nos próximos 20 segundos?" <strong>Pergunta 3:</strong> "Isso fala com UMA pessoa específica, não com todo mundo?"</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Salva e usa essas 3 perguntas antes de gravar qualquer vídeo."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-provocacao" data-id="v26">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 26</div><div class="card-num">26</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 React</span></div>
+        <div class="card-gancho">"Alguém comentou que meu conteúdo era igual ao de todo mundo. Tenho que concordar."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Estrutura: Reação a Comentário</div><div class="roteiro-text">Mostra o comentário na tela. "E eu concordei porque estava copiando estrutura sem colocar minha voz. A partir daí parei de imitar e comecei a adaptar. Resultado: o engajamento triplicou." <strong>Gatilho de exclusividade + ocitocina.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Você está copiando ou adaptando? Comenta."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="day-label">Terça · 27 de Maio ✦ Alto engajamento</div>
+  <div class="day-row">
+    <div class="video-card tipo-historia" data-id="v27">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 27</div><div class="card-num">27</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-fire">🔥 Série Netflix</span></div>
+        <div class="card-gancho">"Se meu conteúdo fosse uma série da Netflix, esse seria o episódio piloto."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Conceito — Série</div><div class="roteiro-text">"A série seria um reality onde eu testo estratégias malucas de crescimento digital e mostro os bastidores reais. Cada episódio ensina algo novo. E sempre tem cliffhanger pro próximo." <strong>Dopamina: loop de recompensa — expectativa do próximo conteúdo.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Me segue para não perder o próximo episódio."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + CLIFFHANGER</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">24 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-valor" data-id="v28">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 28</div><div class="card-num">28</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Bastidor cliente</span></div>
+        <div class="card-gancho">"Analisei o Instagram de um cliente que não fechava ninguém. Encontrei isso."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">Caso real anônimo</div><div class="roteiro-text">Descreve o perfil sem citar nome — bom conteúdo, bio genérica, sem CTA nos vídeos, postava irregularmente. O que mudou: bio específica, CTA em todo vídeo, frequência de 5x por semana. Resultado depois de 30 dias.</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Quer uma análise do seu perfil? Me chama no direct."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DIRECT (CONSULTORIA)</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">23 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SEMANA 3 -->
+<div class="week-section fade-in">
+  <div class="week-header">
+    <div class="week-num">03</div>
+    <div class="week-info">
+      <div class="week-title">SEMANA 3 — APROFUNDAR E CONVERTER</div>
+      <div class="week-theme">Autoridade máxima · Prova social · Conversão</div>
+    </div>
+    <div class="week-dates">28 Mai – 3 Jun</div>
+  </div>
+
+  <div class="day-label">Quarta · 28 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v29">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 29</div><div class="card-num">29</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Marcar amigo</span></div>
+        <div class="card-gancho">"Esse vídeo vai chegar pra quem precisa: para de se comparar com quem grava há 5 anos."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">"Você está no mês 3. Eles estão no ano 4. A comparação não faz sentido matemático. É como comparar resultado de investimento de 3 meses com resultado de 4 anos. A única comparação válida: você hoje vs você há 30 dias."</div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Marca aqui quem precisa ouvir isso."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ MARCAR AMIGO</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">25 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card tipo-valor" data-id="v30">
+      <div class="card-top-bar"></div>
+      <div class="card-inner">
+        <div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 30</div><div class="card-num">30</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div>
+        <div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Financeiro</span></div>
+        <div class="card-gancho">"Quanto cobra um gestor de tráfego iniciante — a tabela real que ninguém mostra."</div>
+        <div class="card-accordion">
+          <button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro completo</span><span class="accordion-arrow">▼</span></button>
+          <div class="card-accordion-body">
+            <div class="roteiro-section"><div class="roteiro-label">I + C</div><div class="roteiro-text">Mostra faixas reais por nível: <strong>Iniciante:</strong> R$500–800/mês. <strong>Intermediário:</strong> R$1.200–2.500/mês. <strong>Avançado:</strong> R$3.000–6.000+/mês ou % do investimento. <strong>Gatilho de exclusividade — informação que ninguém fala.</strong></div></div>
+            <div class="roteiro-section"><div class="roteiro-label">A — Ação</div><div class="roteiro-text">"Salva e para de cobrar barato por medo."</div></div>
+            <div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div>
+            <div class="fvc-strip"><div class="fvc-label">FVC</div><div class="fvc-dots"><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot high"></div><div class="fvc-dot filled"></div></div><div style="font-size:9px;color:var(--green);font-weight:700;margin-left:4px">22 pts</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAS 29 MAI – 3 JUN — cards resumidos para completar 62 -->
+  <div class="day-label">Quinta · 29 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v31"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 31</div><div class="card-num">31</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Viral</span></div><div class="card-gancho">"Quando a ideia de postar vier — grava. Não amanhã. Agora."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>G:</strong> "A inspiração dura 20 minutos. O adiamento dura semanas." <strong>I+C:</strong> "Toda vez que você pensa 'vou gravar depois', a ideia murcha. O melhor vídeo que você nunca fez foi o que você pensou em gravar na fila do supermercado e não gravou." <strong>A:</strong> "Salva esse vídeo pra quando a preguiça aparecer."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div></div></div></div></div>
+    <div class="video-card tipo-bastidor" data-id="v32"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 32</div><div class="card-num">32</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-purple">Reel 20s</span><span class="badge badge-gold">Rotina</span></div><div class="card-gancho">"Minha rotina de criação: como gravo 10 vídeos em 2 horas."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>G:</strong> Número chocante. <strong>I+C:</strong> "1h pra pautar sem filtrar / Bloco de gravação no mesmo cenário / Edição rápida — corta silêncio, coloca legenda, sobe. 2h de gravação = semana inteira de conteúdo." <strong>A:</strong> "Salva e testa essa semana."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Sexta · 30 de Maio</div>
+  <div class="day-row">
+    <div class="video-card tipo-provocacao" data-id="v33"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 33</div><div class="card-num">33</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Compartilhar</span></div><div class="card-gancho">"Pronto não é um estado. É uma decisão que você nunca vai tomar esperando."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>G:</strong> Contradiz crença. <strong>I+C:</strong> "'Quando eu aprender mais.' 'Quando eu tiver câmera melhor.' 'Quando montar escritório.' Isso não é preparo. É procrastinação com nome bonito." <strong>Virada:</strong> "Você nunca vai estar 100% pronto. E está tudo bem. Começa assim mesmo." <strong>A:</strong> "Comenta: o que está esperando pra começar?"</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div></div></div></div></div>
+    <div class="video-card tipo-valor" data-id="v34"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 34</div><div class="card-num">34</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Autoridade</span></div><div class="card-gancho">"O que aprendi gerenciando clientes que nenhum curso me ensinou."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>4 lições:</strong> 1. Cliente quer sentir que você está no controle. 2. Relatório bonito não substitui conversa direta. 3. Cliente que dá mais trabalho raramente é o mais lucrativo. 4. Educação do cliente é parte do serviço. <strong>A:</strong> "Me segue — bastidores reais toda semana."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Sábado · 31 de Maio ✦ Melhor dia</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v35"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 35</div><div class="card-num">35</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Salvar</span></div><div class="card-gancho">"Conteúdo publicado ontem bate conteúdo perfeito que nunca saiu. Sempre."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> "Os vídeos que mais cresceram no meu perfil não foram os que eu mais gostei. Foram os que eu menos editei. A audiência não vai te dar nota. Ela vai ficar ou sair. E ela só pode fazer isso se você aparecer." <strong>A:</strong> "Salva esse vídeo pra quando você travar antes de postar."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div></div></div></div></div>
+    <div class="video-card tipo-provocacao" data-id="v36"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 36</div><div class="card-num">36</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-gold">Debate</span></div><div class="card-gancho">"Trabalhar de casa não é pra todo mundo. E tá tudo bem admitir isso."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> "A internet vendeu 'trabalha de pijama 4h por dia.' Isso existe. Só que antes vêm 2 anos de disciplina sem chefe, sem salário fixo, sem estrutura. Quem não se organiza sem cobranças vai sofrer mais." <strong>Virada:</strong> "Mas isso também se aprende. Se você quer aprender, me segue." <strong>A:</strong> "CLT ou empreender? Comenta sem julgamento."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DEBATE</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Domingo · 1 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-historia" data-id="v37"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 37</div><div class="card-num">37</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-fire">🔥 Update</span></div><div class="card-gancho">"Update de 30 dias postando todo dia: o que mudou de verdade no meu perfil."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text">Mostra números reais. O que cresceu: seguidores, alcance, mensagens. O que não funcionou: honestidade sobre vídeos ruins. Aprendizado: o que vai fazer diferente no próximo mês. <strong>A:</strong> "Me segue pra acompanhar junho."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + EXPECTATIVA</div></div></div></div></div></div>
+    <div class="video-card tipo-gancho" data-id="v38"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 38</div><div class="card-num">38</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Alto viral</span></div><div class="card-gancho">"O vídeo que não performou me ensinou mais do que o que viralizou."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> "Quando um vídeo explode você celebra. Quando não performa, você tem dados reais. Sabe o que não funciona pro seu público. Isso vale mais. Pego os 3 piores do mês e analiso: gancho fraco? Tema errado? CTA ruim?" <strong>A:</strong> "Você analisa seus vídeos que não performam? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Segunda · 2 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-historia" data-id="v39"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 39</div><div class="card-num">39</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-gold">Motivacional</span></div><div class="card-gancho">"Em algum lugar tem uma pessoa que precisa de um conteúdo que só você pode fazer."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Ocitocina máxima</div><div class="roteiro-text"><strong>I+C:</strong> "Não porque você é especial. Porque você viveu o que viveu. Tem a perspectiva que tem. Quando você não posta, essa pessoa não encontra a resposta que precisava." <strong>Encerramento:</strong> Tom suave, olho no olho: "Isso não é obrigação. É oportunidade." <strong>A:</strong> "Salva pra quando pensar que não tem nada pra falar."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div></div></div></div></div>
+    <div class="video-card tipo-valor" data-id="v40"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 40</div><div class="card-num">40</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">90 dias</span></div><div class="card-gancho">"O que fazer nos primeiros 90 dias se você quer trabalhar com marketing digital."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>Mês 1:</strong> Escolhe serviço, aprende básico, pega cliente mesmo de graça. <strong>Mês 2:</strong> Documenta tudo — resultado do cliente, erros, aprendizados. Isso vira conteúdo. <strong>Mês 3:</strong> Já tem prova social. Agora cobra. Aumenta frequência. <strong>A:</strong> "Em qual mês você está? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO + FOLLOW</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Terça · 3 de Junho ✦ Alto engajamento</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v41"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 41</div><div class="card-num">41</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Encerramento</span></div><div class="card-gancho">"Um mês atrás eu tinha X seguidores. Hoje tenho Y. O que fiz diferente."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text">Números reais. Top 3 ações que mais moveram. O que não funcionou. O que vai testar em junho. <strong>A:</strong> "Me segue pra acompanhar junho do zero."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + EXPECTATIVA JUNHO</div></div></div></div></div></div>
+    <div class="video-card tipo-provocacao" data-id="v42"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 42</div><div class="card-num">42</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Follow direto</span></div><div class="card-gancho">"Se você já assistiu meus vídeos esse mês e ainda não me segue — esse é pra você."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> Tom bem-humorado: "Você já viu bastante aqui. Sabe o que eu falo, como falo, se faz sentido pra você. A única decisão que falta é apertar o botão." <strong>Promessa:</strong> "Em junho: [anuncia 2 séries de conteúdo novas]. Se isso faz sentido, aperta agora." <strong>A:</strong> "Me segue e comenta 'junho' se tiver dentro."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW DIRETO</div></div></div></div></div></div>
+  </div>
+</div>
+
+<!-- ============================================================ SEMANA 4 -->
+<div class="week-section fade-in">
+  <div class="week-header">
+    <div class="week-num">04</div>
+    <div class="week-info">
+      <div class="week-title">SEMANA 4 — VIRALIZAR E FECHAR FORTE</div>
+      <div class="week-theme">FVC máximo · Comunidade · Quadro fixo</div>
+    </div>
+    <div class="week-dates">4 – 13 Jun</div>
+  </div>
+
+  <div class="day-label">Quarta · 4 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-lista" data-id="v43"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 43</div><div class="card-num">43</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-green">Reel 20s</span><span class="badge badge-fire">🔥 Quadro fixo</span></div><div class="card-gancho">"Toda semana eu vou mostrar 1 erro que vi no Instagram de alguém — sem julgamento."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Quadro Fixo Semanal</div><div class="roteiro-text">Série reconhecível visualmente — mesmo cenário, mesma abertura toda semana. <strong>Dopamina: loop de recompensa — público espera o próximo episódio.</strong> Analisa perfil anônimo: o erro, como corrigir, resultado esperado. <strong>A:</strong> "Quer que eu analise o seu? Comenta 'analisa' aqui."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO + SERIE</div></div></div></div></div></div>
+    <div class="video-card tipo-valor" data-id="v44"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 44</div><div class="card-num">44</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Dopamina</span></div><div class="card-gancho">"O segredo que criadores com 1 milhão usam e você provavelmente não usa ainda."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Expectativa dopamínica</div><div class="roteiro-text"><strong>I+C:</strong> "Eles criam cliffhanger entre posts. Cada vídeo termina com um gancho pro próximo. 'No próximo vídeo eu vou te mostrar...' Isso cria hábito de consumo. O público volta. O algoritmo percebe. O alcance cresce." <strong>A:</strong> "Salva e aplica no seu próximo vídeo."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SALVAR</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Quinta · 5 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v45"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 45</div><div class="card-num">45</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Hater</span></div><div class="card-gancho">"Fixei o comentário mais negativo que recebi. Veja o que aconteceu."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Estratégia: Fixar hater</div><div class="roteiro-text">Mostra o comentário negativo fixado. Responde com calma e argumentos. "Hater fixado vira conteúdo. O público que discorda do hater defende você nos comentários. O engajamento explode." <strong>Gatilho de pertencimento — comunidade se une.</strong> <strong>A:</strong> "Concorda com o comentário ou comigo? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DEBATE + COMUNIDADE</div></div></div></div></div></div>
+    <div class="video-card tipo-historia" data-id="v46"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 46</div><div class="card-num">46</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-gold">Nicho</span></div><div class="card-gancho">"Você não precisa de nicho perfeito. Precisa de consistência imperfeita."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> "Pessoas ficam meses escolhendo nicho enquanto quem escolheu 'errado' e postou todo dia está em 50 mil seguidores. Nicho ruim com consistência bate nicho perfeito com paralisia. Você ajusta o nicho no caminho. Não ajusta o tempo perdido esperando." <strong>A:</strong> "Você está na fase de 'escolher o nicho'? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Sexta · 6 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-valor" data-id="v47"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 47</div><div class="card-num">47</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">FVC máximo</span></div><div class="card-gancho">"Teste rápido: seu último vídeo tem FVC acima de 15? Vamos calcular."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Educativo interativo</div><div class="roteiro-text">Explica o FVC ao vivo: Gancho (1–5), Valor (1–5), Visual (1–5), Emoção (1–5), Viral (1–5). "Some os pontos. Acima de 20: excelente. Abaixo de 15: precisa revisar." Aplica no seu próprio vídeo em tempo real. <strong>A:</strong> "Comenta a pontuação do seu último post."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO INTERATIVO</div></div></div></div></div></div>
+    <div class="video-card tipo-bastidor" data-id="v48"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 48</div><div class="card-num">48</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-purple">Reel 20s</span><span class="badge badge-gold">ManyChat</span></div><div class="card-gancho">"Comente 'quer' aqui embaixo e eu mando o roteiro que uso nos meus vídeos."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Estratégia ManyChat</div><div class="roteiro-text">Vídeo simples mostrando o que você vai entregar no direct. "Desenvolvi esse roteiro nos últimos 6 meses. Toda vez que uso ele, o vídeo performa acima da média. Comenta 'ROTEIRO' e eu mando no direct automaticamente." <strong>Dopamina: escassez + recompensa imediata.</strong></div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO + MANYCHAT</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Sábado · 7 de Junho ✦ Melhor dia</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v49"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 49</div><div class="card-num">49</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Ideia de medo</span></div><div class="card-gancho">"A ideia que eu mais tenho medo de postar — e que provavelmente vai ser a melhor."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Vulnerabilidade extrema</div><div class="roteiro-text">Conta uma ideia de conteúdo que você tem medo de executar — pode ser uma opinião polêmica, um formato diferente, um desafio pessoal. "O conteúdo que a gente mais resiste em fazer geralmente é o que mais conecta." <strong>Ocitocina: comunidade se une em torno da vulnerabilidade.</strong> <strong>A:</strong> "Qual ideia você tem medo de postar? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO PROFUNDO</div></div></div></div></div></div>
+    <div class="video-card tipo-lista" data-id="v50"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 50</div><div class="card-num">50</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-green">Reel 20s</span><span class="badge badge-fire">🔥 1M mentalidade</span></div><div class="card-gancho">"Se eu tivesse 1 milhão de seguidores, esse seria o tipo de conteúdo que eu faria."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Mentalidade de grande criador</div><div class="roteiro-text">"Com 1M eu focaria menos em trends e mais em legado. Criaria conteúdos seriados. Investiria em comunidade fechada. Faria estudos de caso reais. Mas aqui está o paradoxo: não preciso esperar 1M pra fazer isso. Posso fazer isso AGORA." <strong>A:</strong> "Não espera ter 1M. Começa hoje como se já tivesse. Me segue pra ver isso ao vivo."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Domingo · 8 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-provocacao" data-id="v51"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 51</div><div class="card-num">51</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-gold">Expectativa vs realidade</span></div><div class="card-gancho">"Expectativa: trabalhar com internet é glamour. Realidade: é assim."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Estrutura Expectativa vs Realidade</div><div class="roteiro-text"><strong>Expectativa:</strong> "Acordar às 10h, trabalhar 4h, ganhar bem." <strong>Realidade:</strong> "Acordar com notificação de cliente às 7h, gravar 3 vídeos sem resultado, cobrar e receber 'vou pensar', repetir amanhã." <strong>Virada:</strong> "E mesmo assim vale cada segundo. Porque é meu." <strong>A:</strong> "Você está na expectativa ou já chegou na realidade? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div></div></div></div></div>
+    <div class="video-card tipo-valor" data-id="v52"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 52</div><div class="card-num">52</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-gold">Quadro fixo 2</span></div><div class="card-gancho">"Semana 2 do quadro: analisei mais um perfil — esse erro é o mais comum que vejo."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Quadro Fixo — Ep. 2</div><div class="roteiro-text">Mesmo visual da semana anterior — reconhecimento imediato. Novo perfil anônimo, novo erro, nova solução. <strong>Dopamina: progressão da série, público espera o próximo.</strong> <strong>A:</strong> "Comenta 'analisa' se quiser que eu veja o seu."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SÉRIE SEMANAL</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Segunda · 9 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v53"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 53</div><div class="card-num">53</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Compartilhar</span></div><div class="card-gancho">"Consistência bate talento. Sempre. Sem exceção. Eu provei isso."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> "O criador mediano que posta todo dia vai ter mais seguidores que o talentoso que posta quando dá vontade. O algoritmo não premia quem é bom. Premia quem aparece. Eu era o talentoso que não aparecia. Mudei isso. Resultados na bio." <strong>A:</strong> "Concorda? Discorda? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DEBATE</div></div></div></div></div></div>
+    <div class="video-card tipo-bastidor" data-id="v54"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 54</div><div class="card-num">54</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-purple">Reel 20s</span><span class="badge badge-gold">Bastidor real</span></div><div class="card-gancho">"Quanto me custou não ter um processo de vendas por 6 meses — o número real."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Custo da ignorância</div><div class="roteiro-text">Calcula o número estimado de oportunidades perdidas × valor médio. "Não é pra me lamentar. É pra você não cometer o mesmo erro." Mostra o que mudou depois de ter processo. <strong>Ocitocina: vulnerabilidade financeira real.</strong> <strong>A:</strong> "Me segue — semana que vem posto o processo que uso hoje."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + EXPECTATIVA</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Terça · 10 de Junho ✦ Alto engajamento</div>
+  <div class="day-row">
+    <div class="video-card tipo-lista" data-id="v55"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 55</div><div class="card-num">55</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-green">Reel 20s</span><span class="badge badge-fire">🔥 Teste/Quiz</span></div><div class="card-gancho">"Teste rápido: você está crescendo certo ou só crescendo? 3 perguntas."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Estrutura Quiz</div><div class="roteiro-text"><strong>P1:</strong> "Seus seguidores novos vêm do nicho certo ou aleatório?" <strong>P2:</strong> "Seu conteúdo mais salvo resolve um problema ou só entretém?" <strong>P3:</strong> "Quando você posta, tem CTA que leva pro próximo passo?" "Se respondeu não em 2 ou mais: você está crescendo, mas não convertendo." <strong>A:</strong> "Comenta quantos 'nãos' você teve."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO INTERATIVO</div></div></div></div></div></div>
+    <div class="video-card tipo-historia" data-id="v56"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 56</div><div class="card-num">56</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-gold">Quanto tempo</span></div><div class="card-gancho">"Quanto tempo leva pra crescer no Instagram — a resposta honesta que ninguém dá."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA</div><div class="roteiro-text"><strong>I+C:</strong> "Não é 30 dias. Não é 90. É até você entender o que funciona pro seu público — e isso leva tempo diferente pra cada pessoa. Mas tem um padrão: quem posta todo dia por 6 meses e melhora com base nos dados, cresce. Sem exceção." <strong>A:</strong> "Você está no começo ou no meio? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Quarta · 11 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-valor" data-id="v57"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 57</div><div class="card-num">57</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-fire">🔥 Quadro fixo 3</span></div><div class="card-gancho">"Semana 3 do quadro: o erro que mais me incomoda ver nos perfis de marketing."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Quadro Fixo — Ep. 3</div><div class="roteiro-text">Mesmo visual reconhecível. Erro desta semana: bio que não fala com ninguém específico. Como corrigir: estrutura de bio que converte. Resultado esperado com a mudança. <strong>A:</strong> "Sua bio está assim? Comenta 'analisa' pra eu ver."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ SÉRIE + CONSULTORIA</div></div></div></div></div></div>
+    <div class="video-card tipo-gancho" data-id="v58"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 58</div><div class="card-num">58</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 O que ninguém conta</span></div><div class="card-gancho">"O que ninguém te conta sobre trabalhar com marketing digital — o lado feio."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Estrutura "O Que Ninguém Te Conta"</div><div class="roteiro-text">Revela verdades incômodas: cliente some sem avisar, você fica se questionando se é bom o suficiente, tem semanas que nada funciona. "Mas também tem o dia que um cliente manda 'mudou minha empresa' e tudo faz sentido de novo." <strong>A:</strong> "Já passou por isso? Comenta."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO PESSOAL</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Quinta · 12 de Junho</div>
+  <div class="day-row">
+    <div class="video-card tipo-provocacao" data-id="v59"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 59</div><div class="card-num">59</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Desafio final</span></div><div class="card-gancho">"Desafio: posta um vídeo hoje sem assistir antes. Marca o resultado aqui."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Estrutura Desafio</div><div class="roteiro-text">Lança o desafio com regras claras: gravar + editar básico + subir sem rever. "Eu faço isso toda vez. O mundo não acaba. E você quebra o ciclo de travar de uma vez." Promete reagir aos vídeos de quem participar nos stories. <strong>Dopamina: recompensa social — ser visto por você.</strong></div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ DESAFIO COMUNIDADE</div></div></div></div></div></div>
+    <div class="video-card tipo-historia" data-id="v60"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 60</div><div class="card-num">60</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-gold">Reel 20s</span><span class="badge badge-gold">Gratidão</span></div><div class="card-gancho">"Obrigado por cada comentário, cada salvamento, cada follow esse mês."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">Ocitocina — Gratidão e comunidade</div><div class="roteiro-text">Vídeo mais pessoal do mês. Mostra comentários reais que recebeu. "Cada mensagem que chega no direct me lembra por que continuo aparecendo mesmo quando não quero." <strong>Gratidão ativa ocitocina — público se sente visto e parte de algo.</strong> <strong>A:</strong> "Me conta o que esse perfil fez por você esse mês."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ COMENTÁRIO EMOCIONAL</div></div></div></div></div></div>
+  </div>
+
+  <div class="day-label">Sexta · 13 de Junho — Encerramento</div>
+  <div class="day-row">
+    <div class="video-card tipo-gancho" data-id="v61"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 61</div><div class="card-num">61</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-red">Reel 20s</span><span class="badge badge-fire">🔥 Encerramento</span></div><div class="card-gancho">"62 vídeos em 31 dias. O que aprendi sobre crescimento no Instagram."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — Encerramento de ciclo</div><div class="roteiro-text">Resume os 3 maiores aprendizados do mês com dados reais de crescimento. "Não foi perfeito. Mas foi consistente. E consistência foi o que o algoritmo precisava pra começar a distribuir." <strong>A:</strong> "Me segue pra julho — tem novidade chegando."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW + TEASER JULHO</div></div></div></div></div></div>
+    <div class="video-card tipo-valor" data-id="v62"><div class="card-top-bar"></div><div class="card-inner"><div class="card-header"><div class="card-num-day"><div class="card-day-txt">Vídeo 62</div><div class="card-num">62</div></div><div class="card-check" onclick="toggleDone(this)">✓</div></div><div class="card-badges"><span class="badge badge-blue">Reel 20s</span><span class="badge badge-fire">🔥 Follow direto</span></div><div class="card-gancho">"Se você ainda não me segue depois de 31 dias de conteúdo — esse vídeo é a última chance."</div><div class="card-accordion"><button class="card-accordion-toggle" onclick="toggleAccordion(this)"><span>Ver roteiro</span><span class="accordion-arrow">▼</span></button><div class="card-accordion-body"><div class="roteiro-section"><div class="roteiro-label">GICA — CTA direto final</div><div class="roteiro-text">Tom bem-humorado + escassez. "Você já conhece o conteúdo. Já sabe o que eu entrego. A decisão é só uma. Em julho vou postar [promessa específica]. Se isso faz sentido pra você, você sabe o que fazer." <strong>Gatilho de escassez + urgência.</strong> <strong>A:</strong> "Comenta 'julho' se tiver dentro."</div></div><div class="card-cta-strip"><div class="cta-label">CTA</div><div class="cta-value">→ FOLLOW FINAL</div></div></div></div></div></div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">@PEDRO_MUNARETTO · MARKETING DIGITAL</div>
+  <div class="footer-meta">62 conteúdos · Método Segue a Di · 14 Mai – 13 Jun 2026</div>
+</div>
+
+<script>
+const STORAGE_KEY = 'pedro_munaretto_calendar_v1';
+const TOTAL = 62;
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function toggleDone(btn) {
+  const card = btn.closest('.video-card');
+  const id = card.dataset.id;
+  const state = loadState();
+  if (card.classList.contains('done')) {
+    card.classList.remove('done');
+    delete state[id];
+  } else {
+    card.classList.add('done');
+    state[id] = true;
+  }
+  saveState(state);
+  updateStats();
+}
+
+function updateStats() {
+  const state = loadState();
+  const done = Object.keys(state).length;
+  const left = TOTAL - done;
+  const pct = Math.round((done / TOTAL) * 100);
+
+  document.getElementById('count-done').textContent = done;
+  document.getElementById('count-left').textContent = left;
+  document.getElementById('ring-pct').textContent = pct + '%';
+
+  const circle = document.getElementById('ring-circle');
+  const circumference = 2 * Math.PI * 18;
+  circle.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+}
+
+function resetAll() {
+  if (confirm('Resetar todo o progresso?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    document.querySelectorAll('.video-card.done').forEach(c => c.classList.remove('done'));
+    updateStats();
+  }
+}
+
+function toggleAccordion(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+
+function applyState() {
+  const state = loadState();
+  Object.keys(state).forEach(id => {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) card.classList.add('done');
+  });
+  updateStats();
+}
+
+// Scroll progress
+window.addEventListener('scroll', () => {
+  const p = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('scrollpb').style.width = p + '%';
+});
+
+// Fade in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.05 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+applyState();
+</script>
+</body>
+</html>
